@@ -1,0 +1,713 @@
+alerts:
+
+-   'message':    "\
+        \ \n\nOplog window size on {{host.name}} - {{host.ip}} is currently {{value}}"
+    'multi': true
+    'name':    '[Data-tests] [All] [Mongo] {{host.name}} oplog
+        window size less than 1 day.'
+    'options':
+      'include_tags': false
+      'new_host_delay': 300
+      'no_data_timeframe': null
+      'notify_no_data': false
+      'renotify_interval': 0
+      'require_full_window': true
+      'thresholds':
+        'critical': 86400.0
+      'timeout_h': 0
+    'query':    'avg(last_10m):avg:mongodb.oplog.timediff{type:mongo,environment:data-tests}
+        by {host} < 86400'
+    'restricted_roles': null
+    'tags':
+    - 'env:data-tests'
+    - 'cross-features'
+    - 'mongo'
+    'type':    'query alert'
+
+
+-    'message':    "{{#is_alert}}\n\
+    \ \n{{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n\
+    \ \n{{/is_alert_recovery}}\n\n{{#is_no_data}}\n \n{{/is_no_data}}\
+    \ \n\n{{#is_no_data_recovery}}\n \n{{/is_no_data_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] Mongo Latency'
+     'options':
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': 10
+       'renotify_interval': 0
+       'require_full_window': false
+       'thresholds':
+         'critical': 5.0
+       'timeout_h': 1
+     'query':    'avg(last_15m):avg:orca.mongo.latency_test.find.time.max{environment:data-tests}
+    by {mongo} / 60000 > 5'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'cross-features'
+      -    'env:data-tests'
+     'type':    'query alert'
+
+
+-    'message':    "{{#is_alert}}\n \n{{value}} \n{{/is_alert}} \n\n\n{{#is_recovery}}\n \n{{value}} \n{{/is_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Handles] WT caches open file handles
+    in memory'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 250000.0
+         'warning': 200000.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):max:system.fs.file_handles.used{environment:data-tests,type:mongo}
+    by {host} > 250000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\nCache usage on {{host.name}}\
+    \ is high {{value}} > 94 \n{{/is_alert}}\n\n{{#is_warning}}\nCache usage on {{host.name}}\
+    \ is {{value}} \n{{/is_warning}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] Mongo % Cache usage'
+     'options':
+       'escalation_message':    '{{value}}'
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 10
+       'require_full_window': true
+       'thresholds':
+         'critical': 0.95
+         'warning': 0.94
+       'timeout_h': 0
+     'query':    'max(last_5m):max:mongodb.wiredtiger.cache.bytes_currently_in_cache{environment:data-tests} by {host} / avg:mongodb.wiredtiger.cache.maximum_bytes_configured{environment:data-tests}
+    by {host} >= 0.95'
+     'restricted_roles': null
+     'tags':
+      -    'mongo'
+      -    'status'
+      -    'env:data-tests'
+      -    'cross-features'
+     'type':    'query alert'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}\
+    \ "
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Cursor] Open Cursors'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 2000.0
+         'warning': 1000.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.metrics.cursor.open.total{environment:data-tests,type:mongo}
+    by {host} > 2000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}\
+    \ "
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Tickets - Threads Mongo] Read available
+    threads'
+     'options':
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 40.0
+         'warning': 80.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):max:mongodb.wiredtiger.concurrenttransactions.read.available{environment:data-tests,type:mongo}
+    by {host} < 40'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n\
+    \ \n{{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n\
+    \ \n{{/is_alert_recovery}}\n\n{{#is_no_data}}\n \n{{/is_no_data}}\
+    \ \n\n{{#is_no_data_recovery}}\n \n{{/is_no_data_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Tickets - Threads Mongo] Write
+    available threads'
+     'options':
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': 10
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 40.0
+         'warning': 80.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):max:mongodb.wiredtiger.concurrenttransactions.write.available{type:mongo,environment:data-tests}
+    by {host} < 40'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients -
+    Readers'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 15.0
+         'warning': 10.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.globallock.activeclients.readers{environment:data-tests,type:mongo}
+    by {host} > 15'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients
+    - Writers'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 40.0
+         'warning': 30.0
+       'timeout_h': 0
+     'query':    'avg(last_30m):avg:mongodb.globallock.activeclients.writers{type:mongo,environment:data-tests}
+    by {host} > 40'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients -
+    Delete'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 9000.0
+         'warning': 6000.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.opcounters.deleteps{environment:data-tests,type:mongo}
+    by {host} > 9000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients -
+    Update'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 20000.0
+         'warning': 10000.0
+       'timeout_h': 0
+     'query':    'avg(last_1h):avg:mongodb.opcounters.updateps{environment:data-tests,type:mongo}
+    by {host} > 20000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients
+    - Insert'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 20000.0
+         'warning': 10000.0
+       'timeout_h': 0
+     'query':    'avg(last_4h):avg:mongodb.opcounters.insertps{environment:data-tests,type:mongo}
+    by {host} > 20000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Connections] Active clients
+    - Getmore'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 9000.0
+         'warning': 6000.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.opcounters.getmoreps{type:mongo,environment:data-tests}
+    by {host} > 9000'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}\
+    \ "
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Queue]  Queued read requests'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 200.0
+         'warning': 100.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.globallock.currentqueue.readers{environment:data-tests,type:mongo}
+    by {host} > 200'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}\
+    \ "
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Queue]  Queued write requests'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 200.0
+         'warning': 100.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.globallock.currentqueue.writers{environment:data-tests,type:mongo}
+    by {host} > 200'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "{{#is_alert}}MongoDB Replica lag is\
+    \ dangerous on {{host.name}}{{/is_alert}} \n{{#is_recovery}}MongoDB Replica lag\
+    \ is back to normal on {{host.name}}{{/is_recovery}}\n\n"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [app] MongoDB Replica with lag
+    dangerous on {{host.name}}'
+     'options':
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': 60
+       'renotify_interval': 0
+       'require_full_window': false
+       'thresholds':
+         'critical': 5400.0
+         'warning': 4500.0
+       'timeout_h': 0
+     'query':    'avg(last_30m):avg:mongodb.replset.replicationlag{environment:data-tests}
+    by {host} > 5400'
+     'restricted_roles': null
+     'tags':
+      -    'app'
+      -    'env:data-tests'
+      -    'cross-features'
+      -    'mongo'
+
+
+-    'message':    "{{#is_alert}}\n\
+    \ \n{{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n\
+    \ \n{{/is_alert_recovery}}\n\n{{#is_no_data}}\n \n{{/is_no_data}}\
+    \ \n\n{{#is_no_data_recovery}}\n \n{{/is_no_data_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [Mongo Fault Page] Operations
+    which require Mongo to fetch data from disk'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': 10
+       'renotify_interval': 0
+       'require_full_window': true
+       'thresholds':
+         'critical': 800.0
+         'warning': 500.0
+       'timeout_h': 0
+     'query':    'avg(last_15m):avg:mongodb.extra_info.page_faultsps{type:mongo,env:data-tests}
+    by {host} > 800'
+     'restricted_roles': null
+     'tags':
+      -    'status'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+-    'message':    '{{#is_alert}} MongoDB on {{host.name}}
+    has too many open files {{/is_alert}}
+
+    {{#is_alert_recovery}} MongoDB on {{host.name}} open files use has decreased {{/is_alert_recovery}}
+
+    '
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [app] MongoDB has too many
+    open files'
+     'options':
+       'escalation_message': null
+       'include_tags': false
+       'new_host_delay': 300
+       'no_data_timeframe': null
+       'notify_no_data': false
+       'renotify_interval': null
+       'require_full_window': true
+       'thresholds':
+         'critical': 800000.0
+         'warning': 600000.0
+       'timeout_h': null
+     'query':    'avg(last_5m):max:system.processes.open_file_descriptors{environment:data-tests}
+    by {host} > 800000'
+     'restricted_roles': null
+     'tags':
+      -    'app'
+      -    'mongo'
+      -    'env:data-tests'
+      -    'cross-features'
+
+
+-    'message':    "MongoDB process is down on host {{host.name}}\
+    \ \n\n\n{{#is_alert}}\n \n\
+    {{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+     'multi': true
+     'name':    '[Data-tests] [All] [Mongo] [app] MongoDB is down on {{host.name}}'
+     'options':
+       'include_tags': true
+       'new_host_delay': 300
+       'no_data_timeframe': 2
+       'notify_no_data': false
+       'renotify_interval': 0
+       'thresholds':
+         'critical': 3
+         'ok': 1
+         'warning': 1
+       'timeout_h': 0
+     'query':    '"process.up".over("environment:data-tests","process:mongo").by("host","process").last(4).count_by_status()'
+     'restricted_roles': null
+     'tags':
+      -    'env:data-tests'
+      -    'mongo'
+      -    'cross-features'
+     'type':    'service check'
+
+
+-  'message':  "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{#is_no_data}}\n \n{{/is_no_data}} \n\n{{#is_no_data_recovery}}\n\
+     \n{{/is_no_data_recovery}} \n\n{{#is_alert_recovery}}\n\
+    \ \n{{host.name}}: Disk usage back to normal \n{{/is_alert_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo] % Usable Memory on
+    {{type.name}} - {{host.name}}'
+   'options':
+     'escalation_message':  '{{host.name}}: STILL
+      is Low usable memory: {{value}}
+
+      '
+     'evaluation_delay': 300
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': null
+     'notify_no_data': false
+     'notify_audit': true
+     'renotify_interval': 0
+     'require_full_window': true
+     'thresholds':
+       'critical': 0.15
+     'timeout_h': 0
+   'query':  'avg(last_4h):min:system.mem.pct_usable{environment:data-tests,type:mongo}
+    by {host} < 0.15'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'cross-features'
+   'type':  'query alert'
+
+
+-  'message':  "{{#is_alert}}\n\n \n\
+    {{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo] Disk space is low
+    on {{host.name}} - {{device.name}} - Data'
+   'options':
+     'escalation_message':  'Disk space is still low
+      on {{host.name}} ( {{device.name}} - Production ) - Data
+
+      '
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': null
+     'notify_no_data': false
+     'renotify_interval': 60
+     'require_full_window': false
+     'thresholds':
+       'critical': 85.0
+       'warning': 81.0
+     'timeout_h': 0
+   'query':  'avg(last_10m):max:system.disk.in_use{environment:data-tests,type:mongo,device:/dev/xvdf1}
+    by {host,device} * 100 >= 85'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'cross-features'
+   'type':  'query alert'
+
+
+-  'message':  "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{value}} \nMongo logs, journal and boot devices. \n\n{{#is_alert_recovery}}\n\
+     \n{{/is_alert_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo] Disk space is low
+    on {{host.name}} - {{device.name}} - Logs'
+   'options':
+     'escalation_message':  'Disk space is still low
+      on {{host.name}} ( {{device.name}} - Production ) - Logs
+
+      '
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': null
+     'notify_no_data': false
+     'renotify_interval': 60
+     'require_full_window': false
+     'thresholds':
+       'critical': 85.0
+       'warning': 81.0
+     'timeout_h': 0
+   'query':  'avg(last_10m):max:system.disk.in_use{environment:data-tests,type:mongo,!device:/dev/xvdf1}
+    by {host,device} * 100 >= 85'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'mongosys'
+    -  'cross-features'
+   'type':  'query alert'
+
+
+-  'message':  "{{#is_alert}}\n\n{{host.name}}:\
+    \ High CPU usage: {{value}}  \n{{/is_alert}} \n\n{{#is_recovery}}\n\n\
+    {{/is_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo] % CPU Consumption'
+   'options':
+     'escalation_message':  "{{#is_alert}}\n\
+      \ \n{{/is_alert}} \n\n{{value}} \n\n{{#is_alert_recovery}}\n \n\
+      {{/is_alert_recovery}}"
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': 10
+     'renotify_interval': 0
+     'require_full_window': true
+     'thresholds':
+       'critical': 85.0
+     'timeout_h': 0
+   'query':  'avg(last_4h):100 - avg:system.cpu.idle{environment:data-tests,type:mongo}
+    by {host} > 85'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'cross-features'
+   'type':  'query alert'
+
+
+-  'message':  "{{#is_alert}}\n \n{{/is_alert}}\
+    \ \n\n{{#is_alert_recovery}}\n \n{{/is_alert_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo]  Load average (norm.15)'
+   'options':
+     'evaluation_delay': 300
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': null
+     'notify_no_data': false
+     'renotify_interval': 0
+     'require_full_window': true
+     'thresholds':
+       'critical': 1.6
+       'warning': 1.5
+     'timeout_h': 0
+   'query':  'min(last_4h):avg:system.load.norm.15{environment:data-tests,type:mongo}
+    by {host} > 1.6'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'cross-features'
+
+
+-  'message':  "{{#is_alert}}\n{{host.name}}: Low\
+    \ usable swap disk: {{value}}  \n \n{{/is_alert}} \n\n{{#is_no_data}}\n\
+    {{host.name}}: Low usable swap disk: {{value}}  \n \n{{/is_no_data}}\
+    \ \n\n{{#is_recovery}}\n{{host.name}}: Disk usage back to normal \n\
+    \ \n{{/is_recovery}}\n\n{{#is_no_data_recovery}}\n{{host.name}}: is reporting\
+    \ again \n \n{{/is_no_data_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo]  % Usable Swap Disk'
+   'options':
+     'escalation_message':  '{{host.name}}: STILL
+      is Low usable swap disk: {{value}}
+
+      '
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': null
+     'notify_no_data': false
+     'notify_audit': true
+     'renotify_interval': 0
+     'require_full_window': true
+     'thresholds':
+       'critical': 0.6
+     'timeout_h': 1
+   'query':  'avg(last_4h):min:system.swap.pct_free{environment:data-tests,type:mongo}
+    by {host} < 0.6'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'status'
+    -  'mongo'
+    -  'cross-features'
+
+
+-  'message':  "{{#is_alert}}\n \n{{value}}\
+    \ \n{{/is_alert}} \n\n{{#is_no_data}}\n \n{{host.name}} \n{{/is_no_data}}\
+    \ \n\n{{#is_alert_recovery}}\n \n{{value}} \n{{/is_alert_recovery}}\n\
+    \n{{#is_no_data_recovery}}\n \n{{host.name}} is reporting again\n\
+    {{/is_no_data_recovery}}"
+   'multi': true
+   'name':  '[Data-tests] [All] [Sys] [Mongo]  No swap configured
+    for {{host.name}}'
+   'options':
+     'include_tags': false
+     'new_host_delay': 300
+     'no_data_timeframe': 10
+     'renotify_interval': 0
+     'require_full_window': false
+     'thresholds':
+       'critical': 0.0
+     'timeout_h': 0
+   'query':  'avg(last_5m):max:system.swap.total{environment:data-tests,!type:jungle,type:mongo}
+    by {host} <= 0'
+   'restricted_roles': null
+   'tags':
+    -  'env:data-tests'
+    -  'mongo'
+    -  'status'
+    -  'cross-features'
+
