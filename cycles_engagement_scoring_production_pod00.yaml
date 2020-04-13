@@ -1,0 +1,53 @@
+alerts:
+
+- 'message': '@pagerduty-Ofek-Datadog'
+  'name': '[Prod] [Pod00] [App] [Engagement-Scoring] [SEV0] Engagement-Scoring Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(sum:orca.module.tenant_run.run_full_cycle.time.count{environment:production,feature_name:engagement-scoring,canary:false,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'engagement-scoring'
+  - 'pod00'
+  - 'sev0'
+  - 'app'
+  - 'pagerduty'
+  'type': 'query alert'
+
+
+- 'message': "{{#is_alert}}\n\n@pagerduty-Ofek-Datadog\n{{/is_alert}} \n\n{{#is_recovery}}\n\
+    \ \n@pagerduty-Ofek-Datadog\n{{/is_recovery}}"
+  'name': '[Prod] [Pod00] [App] [Engagement-Scoring] Failed Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 60
+    'require_full_window': true
+    'thresholds':
+      'critical': 20.0
+      'warning': 15.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.cycle.error{environment:production,feature_name:engagement-scoring,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    > 20'
+  'restricted_roles': null
+  'tags':
+    - 'env:production'
+    - 'engagement-scoring'
+    - 'pod00'
+    - 'app'
+    - 'status'
+    - 'pagerduty'
+
+  'type': 'query alert'

@@ -1,0 +1,25 @@
+alerts:
+
+- 'message': ''
+  'name': '[Prod] [Canary] [App] [All] [SEV0] All Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(sum:orca.module.tenant_run.run_full_cycle.time.count{environment:production,canary:true,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'canary'
+  - 'cross-features'
+  - 'sev0'
+  - 'app'
+  - 'pagerduty'
+  'type': 'query alert'

@@ -1,0 +1,49 @@
+alerts:
+
+- 'message': ''
+  'name': '[Integration] [Pod01] [App] [Core-Fetcher] [SEV0] Core-Fetcher Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(sum:orca.module.tenant_run.run_full_cycle.time.count{environment:integration,feature_name:core-fetcher,pod:pod01,!sfenv:stmp1}.as_count(),0)
+    < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:integration'
+  - 'core-fetcher'
+  - 'pod01'
+  - 'sev0'
+  - 'app'
+  'type': 'query alert'
+
+
+- 'message': "{{#is_alert}}\n\n{{/is_alert}} \n\n{{#is_recovery}}\n\
+    \ \n{{/is_recovery}}"
+  'name': '[Integration] [Pod01] [App] [Core-Fetcher] Failed Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 60
+    'require_full_window': true
+    'thresholds':
+      'critical': 20.0
+      'warning': 15.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.cycle.error{environment:integration,feature_name:core-fetcher,pod:pod01,!sfenv:stmp1}.as_count(),0)
+    > 20'
+  'restricted_roles': null
+  'tags':
+    - 'env:integration'
+    - 'core-fetcher'
+    - 'pod01'
+    - 'app'
+    - 'status'
+  'type': 'query alert'

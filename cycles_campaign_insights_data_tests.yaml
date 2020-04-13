@@ -1,0 +1,47 @@
+alerts:
+
+- 'message': ''
+  'name': '[Data-tests] [App] [Campaign-Insights] [SEV0] Campaign-Insights Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(sum:orca.module.tenant_run.run_full_cycle.time.count{environment:data-tests,feature_name:campaign-insights,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:data-tests'
+  - 'campaign-insights'
+  - 'sev0'
+  - 'app'
+  'type': 'query alert'
+
+
+- 'message': "{{#is_alert}}\n@\n{{/is_alert}} \n\n{{#is_recovery}}\n@\
+    \ \n{{/is_recovery}}"
+  'name': '[Data-tests] [App] [Campaign-Insights] Failed Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 60
+    'require_full_window': true
+    'thresholds':
+      'critical': 20.0
+      'warning': 15.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.cycle.error{environment:data-tests,feature_name:campaign-insights,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    > 20'
+  'restricted_roles': null
+  'tags':
+    - 'env:data-tests'
+    - 'campaign-insights'
+    - 'app'
+    - 'status'
+  'type': 'query alert'

@@ -1,0 +1,51 @@
+alerts:
+
+- 'message': '@pagerduty-Ofek-Datadog'
+  'name': '[Prod] [App] [All] [SEV0] All Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(sum:orca.module.tenant_run.run_full_cycle.time.count{environment:production,canary:false,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'cross-features'
+  - 'sev0'
+  - 'app'
+  - 'pagerduty'
+  'type': 'query alert'
+
+
+- 'message': "{{#is_alert}}\n\n@pagerduty-Ofek-Datadog\n{{/is_alert}} \n\n{{#is_recovery}}\n\
+    \ \n@pagerduty-Ofek-Datadog\n{{/is_recovery}}"
+  'name': '[Prod] [App] [All] Failed Cycles'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 60
+    'require_full_window': true
+    'thresholds':
+      'critical': 20.0
+      'warning': 15.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.cycle.error{environment:production,!sfenv:stmp1,!sfenv:stmp2}.as_count(),0)
+    > 20'
+  'restricted_roles': null
+  'tags':
+    - 'env:production'
+    - 'cross-features'
+    - 'app'
+    - 'status'
+    - 'pagerduty'
+
+  'type': 'query alert'
