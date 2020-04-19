@@ -1,0 +1,168 @@
+alerts:
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] Integration - Pushed data from Lead-Scoring to core'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.push_sfdc.records{environment:production,feature_name:lead-scoring}.as_count(), 0) < 1'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] Integration - Fetched data core to Lead-Scoring'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+      'warning': 200.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(avg:orca.get_sf_data.total_obj_fetched{environment:production,feature_name:lead-scoring}, 0) < 100'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] RabbitMQ - Messages waiting in queue'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 3.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'avg(last_15m):avg:rabbitmq.queue.messages_ready{environment:production,rabbitmq_vhost:lead-scoring} > 3'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'rabbitMQ'
+  - 'infra'
+  - 'status'
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] Celery - Count celery tasks'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1.0
+      'warning': 10.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):max:orca.orca.celery_task.time.count{environment:production,feature_name:lead-scoring}.as_count() < 1'
+  'restricted_roles': null
+  'tags':
+  - 'celery'
+  - 'status'
+  - 'lead-scoring'
+  - 'env:production'
+  - 'infra'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] AWS Elasticache Freeable memory aws.elasticache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1000000000.0
+    'timeout_h': 0
+  'query': 'avg(last_30m):avg:aws.elasticache.freeable_memory{replication_group:celery-ls-production-pod00} < 1000000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Prod] [Lead-Scoring] [Infra] AWS Elasticache - bytes used for cache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 15500000000.0
+    'timeout_h': 0
+  'query': 'avg(last_5m):avg:aws.elasticache.bytes_used_for_cache{replication_group:celery-ls-production-pod00} by {name} > 15500000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Lead-Scoring] [Infra] AWS Elasticache Redis flushes'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10.0
+    'timeout_h': 0
+  'query': 'sum(last_1h):avg:aws.elasticache.evictions{replication_group:celery-ls-production-pod00}.as_count() > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'lead-scoring'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+

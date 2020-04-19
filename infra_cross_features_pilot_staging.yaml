@@ -1,0 +1,526 @@
+alerts:
+
+- 'message': '.'
+  'name': '[Staging] [All] [Infra] Slack service sent messages is low'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 2.0
+      'warning': 5.0
+    'timeout_h': 0
+  'query': 'sum(last_1d):default(sum:aws.sqs.number_of_messages_sent{queuename:pilot-staging-slack-service.fifo}.as_count(), 0) < 2'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'slack'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': '.'
+  'name': '[Staging] [All] [Infra] Slack service delayed messages'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10.0
+      'warning': 5.0
+    'timeout_h': 0
+  'query': 'sum(last_1h):default(max:aws.sqs.approximate_number_of_messages_delayed{queuename:pilot-staging-slack-service.fifo}, 0) > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'slack'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Integration - Pushed data from All to core'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.push_sfdc.records{environment:pilot-staging}.as_count(), 0) < 1'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Integration - Fetched data from core to All'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+      'warning': 200.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(avg:orca.get_sf_data.total_obj_fetched{environment:pilot-staging}, 0) < 100'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] RabbitMQ node memory usage'
+  'options':
+    'escalation_message': 'RabbitMQ node memory consumption still very high on {{host.name}}'
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 240
+    'require_full_window': true
+    'thresholds':
+      'critical': 35.0
+      'warning': 30.0
+    'timeout_h': 0
+  'query': 'min(last_1h):avg:rabbitmq.node.mem_used{environment:pilot-staging} by {host} / avg:system.mem.total{environment:pilot-staging} by {host} * 100 > 35'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'rabbitMQ'
+  - 'infra'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] RabbitMQ node memory use is high on {{host.name}}'
+  'options':
+    'escalation_message': 'RabbitMQ node memory consumption still very high on {{host.name}}'
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 240
+    'require_full_window': true
+    'thresholds':
+      'critical': 4000000000.0
+      'warning': 2000000000.0
+    'timeout_h': 0
+  'query': 'min(last_5m):avg:rabbitmq.node.mem_used{environment:pilot-staging} by {host} > 4000000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'rabbitMQ'
+  - 'infra'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] RabbitMQ - Messages waiting in queue'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 3.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'avg(last_15m):avg:rabbitmq.queue.messages_ready{environment:pilot-staging} > 3'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'rabbitMQ'
+  - 'infra'
+  - 'status'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] RabbitMQ on {{host.name}} is down or {{vhost.name}} doesn''t exist.'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'thresholds':
+      'critical': 3
+      'ok': 1
+    'timeout_h': 0
+  'query': '"rabbitmq.aliveness".over("environment:pilot-staging").by("host","vhost").last(4).count_by_status()'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'rabbitMQ'
+  - 'infra'
+  'type': 'service check'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] RabbitMQ FD use is high'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 15000.0
+      'warning': 10000.0
+    'timeout_h': 0
+  'query': 'avg(last_5m):sum:rabbitmq.node.fd_used{environment:pilot-staging} by {host} > 15000'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'rabbitMQ'
+  - 'infra'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] RDS CPU High'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_audit': true
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 80.0
+      'warning': 70.0
+    'timeout_h': 0
+  'query': 'avg(last_30m):avg:aws.rds.cpuutilization{name:jungle-pilot-staging} > 80'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'rds'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] RDS Low Memory'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_audit': true
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 15.0
+      'warning': 20.0
+    'timeout_h': 0
+  'query': 'avg(last_30m):( avg:aws.rds.memory.free{name:jungle-pilot-staging} / avg:aws.rds.memory.total{name:jungle-pilot-staging} ) * 100 < 15'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'infra'
+  - 'rds'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Celery - Count celery tasks'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+      'warning': 300.0
+    'timeout_h': 0
+  'query': 'sum(last_15m):avg:orca.orca.celery_task.time.count{env:pilot-staging} by {feature_name}.as_count() < 100'
+  'restricted_roles': null
+  'tags':
+  - 'celery'
+  - 'status'
+  - 'cross-features'
+  - 'env:pilot-staging'
+  - 'infra'
+  'type': 'query alert'
+
+
+- 'message': '.'
+  'name': '[Staging] [All] [Infra] Fetcher - SIQ Objects Fetched (< 100 4H)'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 60
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):avg:orca.siq.fetch.object_fetches{environment:pilot-staging}.as_count() < 100'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'integration'
+  - 'infra'
+  'type': 'query alert'
+
+
+- 'message': ".}"
+  'name': '[Staging] [All] [Infra] Fetcher - Pardot Fetch - Objects'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+      'warning': 200.0
+    'timeout_h': 0
+  'query': 'sum(last_1d):avg:pardot.fetch_records{environment:pilot-staging}.as_count() < 100'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'integration'
+  - 'infra'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] AWS Elasticache Freeable memory aws.elasticache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1000000000.0
+    'timeout_h': 0
+  'query': 'avg(last_30m):avg:aws.elasticache.freeable_memory{replication_group:celery-staging-pod00} < 1000000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] AWS Elasticache - bytes used for cache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 15500000000.0
+    'timeout_h': 0
+  'query': 'avg(last_5m):avg:aws.elasticache.bytes_used_for_cache{replication_group:celery-staging-pod00} by {name} > 15500000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] AWS Elasticache Redis flushes'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10.0
+    'timeout_h': 0
+  'query': 'sum(last_1h):avg:aws.elasticache.evictions{replication_group:celery-staging-pod00}.as_count() > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Zookeeper (Only exposed by the leader) number of pending syncs from the followers'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10.0
+      'warning': 8.0
+    'timeout_h': 0
+  'query': 'avg(last_1h):avg:zookeeper.pending_syncs{environment:pilot-staging} by {name} > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'zookeeper'
+  - 'infra'
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Zookeeper latency'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10000.0
+      'warning': 7000.0
+    'timeout_h': 0
+  'query': 'avg(last_1h):avg:zookeeper.latency.max{environment:pilot-staging} by {name} > 10000'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'zookeeper'
+  - 'infra'
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] Zookeeper Number of queued requests in the server: {{host.name}}'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': false
+    'thresholds':
+      'critical': 10.0
+      'warning': 8.0
+    'timeout_h': 0
+  'query': 'avg(last_1h):avg:zookeeper.outstanding_requests{environment:pilot-staging} by {name} > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'zookeeper'
+  - 'infra'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Staging] [All] [Infra] Zookeeper integration is down on {{host.name}}'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 2
+    'renotify_interval': 20
+    'thresholds':
+      'critical': 3
+    'timeout_h': 0
+  'query': '"zookeeper.ruok".over("environment:pilot-staging").by("host","port").last(4).count_by_status()'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'zookeeper'
+  - 'infra'
+  'type': 'service check'
+
+- 'message': "."
+  'name': '[Staging] [All] [Infra] Zookeeper nodes number'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 20.0
+      'warning': 30.0
+    'timeout_h': 0
+  'query': 'avg(last_1h):avg:zookeeper.nodes{environment:pilot-staging} by {name} < 20'
+  'restricted_roles': null
+  'tags':
+  - 'env:pilot-staging'
+  - 'cross-features'
+  - 'status'
+  - 'zookeeper'
+  - 'infra'
+
+
+

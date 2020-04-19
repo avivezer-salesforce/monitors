@@ -1,0 +1,168 @@
+alerts:
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] Integration - Pushed data from Oppcasting to core'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):default(sum:orca.push_sfdc.records{environment:production,feature_name:oppcasting}.as_count(), 0) < 1'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] Integration - Fetched data core to Oppcasting'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 100.0
+      'warning': 200.0
+    'timeout_h': 0
+  'query': 'sum(last_30m):default(avg:orca.get_sf_data.total_obj_fetched{environment:production,feature_name:oppcasting}, 0) < 100'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'infra'
+  - 'integration'
+  - 'status'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] RabbitMQ - Messages waiting in queue'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 3.0
+      'warning': 2.0
+    'timeout_h': 0
+  'query': 'avg(last_15m):avg:rabbitmq.queue.messages_ready{environment:production,rabbitmq_vhost:oppcasting} > 3'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'rabbitMQ'
+  - 'infra'
+  - 'status'
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] Celery - Count celery tasks'
+  'options':
+    'include_tags': true
+    'new_host_delay': 300
+    'no_data_timeframe': 10
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1.0
+      'warning': 10.0
+    'timeout_h': 0
+  'query': 'sum(last_4h):max:orca.orca.celery_task.time.count{environment:production,feature_name:oppcasting}.as_count() < 1'
+  'restricted_roles': null
+  'tags':
+  - 'celery'
+  - 'status'
+  - 'oppcasting'
+  - 'env:production'
+  - 'infra'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] AWS Elasticache Freeable memory aws.elasticache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 1000000000.0
+    'timeout_h': 0
+  'query': 'avg(last_30m):avg:aws.elasticache.freeable_memory{replication_group:celery-oc-production-pod01} < 1000000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'multi': true
+  'name': '[Prod] [Oppcasting] [Infra] AWS Elasticache - bytes used for cache'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 15500000000.0
+    'timeout_h': 0
+  'query': 'avg(last_5m):avg:aws.elasticache.bytes_used_for_cache{replication_group:celery-oc-production-pod01} by {name} > 15500000000'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
+- 'message': "."
+  'name': '[Prod] [Oppcasting] [Infra] AWS Elasticache Redis flushes'
+  'options':
+    'include_tags': false
+    'new_host_delay': 300
+    'no_data_timeframe': null
+    'notify_no_data': false
+    'renotify_interval': 0
+    'require_full_window': true
+    'thresholds':
+      'critical': 10.0
+    'timeout_h': 0
+  'query': 'sum(last_1h):avg:aws.elasticache.evictions{replication_group:celery-oc-production-pod01}.as_count() > 10'
+  'restricted_roles': null
+  'tags':
+  - 'env:production'
+  - 'oppcasting'
+  - 'status'
+  - 'redis'
+  - 'infra'
+  - 'managed_service'
+  'type': 'query alert'
+
+
